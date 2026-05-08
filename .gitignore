@@ -2,3 +2,4 @@ _bmad/config.user.toml
 _bmad/custom/*.user.toml
 condo-tenant-billing-demo.zip
 .claude/
+.firebase/

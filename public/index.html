@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Condo Tenant Billing</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <section class="login-screen" id="loginScreen" aria-labelledby="loginTitle">
+      <form class="login-panel" id="loginForm" novalidate>
+        <div>
+          <p class="eyebrow">Condo Admin</p>
+          <h1 id="loginTitle">Tenant Billing Login</h1>
+          <p class="login-copy">Sign in to open the billing workspace.</p>
+          <p class="demo-warning">Demo gate only. Do not use this as real security for tenant data.</p>
+        </div>
+        <label>
+          Username
+          <input id="loginUsername" type="text" autocomplete="username" required>
+        </label>
+        <label>
+          Password
+          <input id="loginPassword" type="password" autocomplete="current-password" required>
+        </label>
+        <button class="button primary" type="submit">Login</button>
+        <p class="message" id="loginMessage" role="alert"></p>
+        <p class="login-hint">Demo credential: admin / admin123</p>
+      </form>
+    </section>
+
+    <main class="app-shell is-hidden" id="appShell" aria-hidden="true">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Condo Admin</p>
+          <h1>Tenant Billing</h1>
+        </div>
+        <div class="header-actions">
+          <button class="button secondary" id="seedDemoBtn" type="button">Load Demo Data</button>
+          <button class="button danger" id="clearDataBtn" type="button">Clear Data</button>
+          <button class="button ghost" id="logoutBtn" type="button">Logout</button>
+        </div>
+      </header>
+
+      <section class="summary-grid" aria-label="Billing summary">
+        <div class="metric">
+          <span>Tenants</span>
+          <strong id="tenantCount">0</strong>
+        </div>
+        <div class="metric">
+          <span>Charges</span>
+          <strong id="chargeCount">0</strong>
+        </div>
+        <div class="metric">
+          <span>Bills</span>
+          <strong id="billCount">0</strong>
+        </div>
+        <div class="metric">
+          <span>Latest Total</span>
+          <strong id="latestTotal">PHP 0.00</strong>
+        </div>
+      </section>
+
+      <div class="workspace">
+        <section class="panel" aria-labelledby="tenantTitle">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Setup</p>
+              <h2 id="tenantTitle">Tenants and Units</h2>
+            </div>
+          </div>
+
+          <form id="tenantForm" class="form-grid" novalidate>
+            <input type="hidden" id="tenantId">
+            <label>
+              Tenant Name
+              <input id="tenantName" type="text" autocomplete="name" required>
+            </label>
+            <label>
+              Unit No.
+              <input id="unitNumber" type="text" required>
+            </label>
+            <label>
+              Contact
+              <input id="tenantContact" type="text" autocomplete="tel">
+            </label>
+            <label>
+              Monthly Rent
+              <input id="monthlyRent" type="number" min="0" step="0.01" required>
+            </label>
+            <div class="form-actions">
+              <button class="button primary" type="submit">Save Tenant</button>
+              <button class="button ghost" id="cancelTenantEdit" type="button">Cancel</button>
+            </div>
+            <p class="message" id="tenantMessage" role="status"></p>
+          </form>
+
+          <div class="list" id="tenantList"></div>
+        </section>
+
+        <section class="panel" aria-labelledby="chargeTitle">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Recurring</p>
+              <h2 id="chargeTitle">Charge Templates</h2>
+            </div>
+          </div>
+
+          <form id="chargeForm" class="form-grid" novalidate>
+            <input type="hidden" id="chargeId">
+            <label>
+              Charge Label
+              <input id="chargeLabel" type="text" placeholder="Association dues" required>
+            </label>
+            <label>
+              Category
+              <select id="chargeCategory">
+                <option>Rent</option>
+                <option>Association Dues</option>
+                <option>Utilities</option>
+                <option>Penalty</option>
+                <option>Other</option>
+              </select>
+            </label>
+            <label>
+              Amount
+              <input id="chargeAmount" type="number" min="0" step="0.01" required>
+            </label>
+            <div class="form-actions">
+              <button class="button primary" type="submit">Save Charge</button>
+              <button class="button ghost" id="cancelChargeEdit" type="button">Cancel</button>
+            </div>
+            <p class="message" id="chargeMessage" role="status"></p>
+          </form>
+
+          <div class="list" id="chargeList"></div>
+        </section>
+
+        <section class="panel wide" aria-labelledby="billingTitle">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Monthly Run</p>
+              <h2 id="billingTitle">Generate Billing</h2>
+            </div>
+          </div>
+
+          <form id="billingForm" class="billing-form" novalidate>
+            <label>
+              Tenant
+              <select id="billingTenant" required></select>
+            </label>
+            <label>
+              Billing Month
+              <input id="billingMonth" type="month" required>
+            </label>
+            <label>
+              Due Date
+              <input id="dueDate" type="date" required>
+            </label>
+            <label>
+              Notes
+              <input id="billNotes" type="text" placeholder="Optional note for the tenant">
+            </label>
+            <fieldset class="charge-picker">
+              <legend>Charges to Include</legend>
+              <div id="chargePicker"></div>
+            </fieldset>
+            <div class="form-actions">
+              <button class="button primary" type="submit">Generate Bill</button>
+              <button class="button secondary" id="printBillBtn" type="button" disabled>Print / Save PDF</button>
+            </div>
+            <p class="message" id="billingMessage" role="status"></p>
+          </form>
+        </section>
+
+        <section class="panel" aria-labelledby="historyTitle">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Records</p>
+              <h2 id="historyTitle">Bill History</h2>
+            </div>
+          </div>
+          <div class="list history-list" id="billHistory"></div>
+        </section>
+
+        <section class="panel preview-panel" aria-labelledby="previewTitle">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Preview</p>
+              <h2 id="previewTitle">Billing Statement</h2>
+            </div>
+          </div>
+          <article id="billPreview" class="bill-preview empty-preview">
+            <p>Select or generate a bill to preview the statement.</p>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
